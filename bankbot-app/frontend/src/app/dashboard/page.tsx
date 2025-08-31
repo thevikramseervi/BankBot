@@ -11,8 +11,11 @@ import {
   TrendingUp, 
   Send,
   User,
-  Settings
+  Settings,
+  Plus
 } from 'lucide-react';
+import Chatbot from '@/components/Chatbot';
+import TransferForm from '@/components/TransferForm';
 
 interface Account {
   id: string;
@@ -32,6 +35,16 @@ interface Transaction {
   created_at: string;
 }
 
+interface Transfer {
+  id: string;
+  from_account: Account;
+  to_account: Account;
+  amount: string;
+  description: string;
+  status: string;
+  created_at: string;
+}
+
 interface BankingStats {
   total_balance: string;
   account_count: number;
@@ -43,9 +56,11 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [transfers, setTransfers] = useState<Transfer[]>([]);
   const [stats, setStats] = useState<BankingStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showChatbot, setShowChatbot] = useState(false);
+  const [showTransferForm, setShowTransferForm] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -80,6 +95,15 @@ export default function Dashboard() {
         const transactionsData = await transactionsResponse.json();
         setTransactions(transactionsData.slice(0, 10)); // Show last 10 transactions
       }
+
+      // Fetch transfers
+      const transfersResponse = await fetch('http://localhost:8000/api/banking/transfers/', {
+        credentials: 'include'
+      });
+      if (transfersResponse.ok) {
+        const transfersData = await transfersResponse.json();
+        setTransfers(transfersData);
+      }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     } finally {
@@ -98,6 +122,10 @@ export default function Dashboard() {
       console.error('Logout error:', error);
       router.push('/');
     }
+  };
+
+  const handleTransferSuccess = () => {
+    fetchDashboardData(); // Refresh data after successful transfer
   };
 
   if (isLoading) {
@@ -123,7 +151,7 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center space-x-4">
               <button
-                onClick={() => setShowChatbot(!showChatbot)}
+                onClick={() => setShowChatbot(true)}
                 className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 <MessageCircle className="h-5 w-5" />
@@ -309,8 +337,85 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* Transfers Tab */}
+        {activeTab === 'transfers' && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow">
+              <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 className="text-lg font-medium text-gray-900">Money Transfers</h3>
+                <button
+                  onClick={() => setShowTransferForm(true)}
+                  className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <Plus className="h-5 w-5" />
+                  <span>New Transfer</span>
+                </button>
+              </div>
+              <div className="p-6">
+                {transfers.length > 0 ? (
+                  <div className="space-y-4">
+                    {transfers.map((transfer) => (
+                      <div key={transfer.id} className="border rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium text-gray-500">
+                            Transfer #{transfer.id.slice(0, 8)}
+                          </span>
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            transfer.status === 'completed' ? 'bg-green-100 text-green-800' :
+                            transfer.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-red-100 text-red-800'
+                          }`}>
+                            {transfer.status.charAt(0).toUpperCase() + transfer.status.slice(1)}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <p className="text-sm text-gray-500">From</p>
+                            <p className="font-medium">{transfer.from_account.account_number}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500">To</p>
+                            <p className="font-medium">{transfer.to_account.account_number}</p>
+                          </div>
+                        </div>
+                        <div className="mt-3 pt-3 border-t">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <p className="text-lg font-semibold text-gray-900">
+                                ${parseFloat(transfer.amount).toFixed(2)}
+                              </p>
+                              {transfer.description && (
+                                <p className="text-sm text-gray-500">{transfer.description}</p>
+                              )}
+                            </div>
+                            <p className="text-sm text-gray-500">
+                              {new Date(transfer.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Send className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No transfers yet</h3>
+                    <p className="text-gray-500 mb-4">Start by making your first money transfer</p>
+                    <button
+                      onClick={() => setShowTransferForm(true)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      Make a Transfer
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Other tabs can be implemented similarly */}
-        {activeTab !== 'overview' && activeTab !== 'accounts' && (
+        {activeTab !== 'overview' && activeTab !== 'accounts' && activeTab !== 'transfers' && (
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
               {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Coming Soon
@@ -322,50 +427,15 @@ export default function Dashboard() {
         )}
       </main>
 
-      {/* Chatbot Modal */}
-      {showChatbot && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
-            <div className="flex items-center justify-between p-4 border-b">
-              <h3 className="text-lg font-medium text-gray-900">Chat with BankBot</h3>
-              <button
-                onClick={() => setShowChatbot(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <span className="sr-only">Close</span>
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className="p-4">
-              <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                <p className="text-sm text-gray-600">
-                  Hi! I'm BankBot, your AI banking assistant. How can I help you today?
-                </p>
-              </div>
-              <div className="space-y-2">
-                <button className="w-full text-left p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
-                  What's my current balance?
-                </button>
-                <button className="w-full text-left p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
-                  How do I transfer money?
-                </button>
-                <button className="w-full text-left p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
-                  Show my recent transactions
-                </button>
-              </div>
-              <div className="mt-4">
-                <input
-                  type="text"
-                  placeholder="Type your message..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Enhanced Chatbot */}
+      <Chatbot isOpen={showChatbot} onClose={() => setShowChatbot(false)} />
+
+      {/* Transfer Form */}
+      <TransferForm 
+        isOpen={showTransferForm} 
+        onClose={() => setShowTransferForm(false)}
+        onSuccess={handleTransferSuccess}
+      />
     </div>
   );
 }
