@@ -61,7 +61,8 @@ export default function Chatbot({ isOpen, onClose }: ChatbotProps) {
     setIsTyping(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/chatbot/chat/chat/', {
+      // Fixed endpoint URL to match Django backend routing
+      const response = await fetch('http://localhost:8000/api/chatbot/chat/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -178,7 +179,7 @@ export default function Chatbot({ isOpen, onClose }: ChatbotProps) {
                 )}
                 {message.entities && Object.keys(message.entities).length > 0 && (
                   <div className="mt-2 text-xs opacity-75">
-                    Entities: {Object.entries(message.entities).map(([key, value]) => `${key}: ${value}`).join(', ')}
+                    Entities: {Object.keys(message.entities).map((key) => `${key}: ${message.entities[key]}`).join(', ')}
                   </div>
                 )}
               </div>
@@ -224,7 +225,7 @@ export default function Chatbot({ isOpen, onClose }: ChatbotProps) {
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Type your message..."
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             />
             <button
               onClick={handleSendMessage}

@@ -22,7 +22,22 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.shortcuts import render
+from django.contrib.auth.models import User
 import json
+
+def home_view(request):
+    return JsonResponse({
+        'message': 'BankBot API is running!',
+        'endpoints': {
+            'admin': '/admin/',
+            'banking_api': '/api/banking/',
+            'chatbot_api': '/api/chatbot/',
+            'auth_login': '/api/auth/login/',
+            'auth_logout': '/api/auth/logout/',
+            'auth_register': '/api/auth/register/'
+        }
+    })
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -78,12 +93,64 @@ def logout_view(request):
             'error': str(e)
         }, status=500)
 
+@csrf_exempt
+@require_http_methods(["POST"])
+def register_view(request):
+    try:
+        data = json.loads(request.body)
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')
+        
+        if not username or not email or not password:
+            return JsonResponse({
+                'error': 'Username, email, and password are required'
+            }, status=400)
+        
+        # Check if user already exists
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({
+                'error': 'Username already exists'
+            }, status=400)
+        
+        if User.objects.filter(email=email).exists():
+            return JsonResponse({
+                'error': 'Email already exists'
+            }, status=400)
+        
+        # Create new user
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password
+        )
+        
+        return JsonResponse({
+            'message': 'User created successfully',
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email
+            }
+        }, status=201)
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'error': 'Invalid JSON data'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'error': str(e)
+        }, status=500)
+
 urlpatterns = [
+    path('', home_view, name='home'),
     path('admin/', admin.site.urls),
     path('api/banking/', include('banking.urls')),
     path('api/chatbot/', include('chatbot.urls')),
     path('api/auth/login/', login_view, name='login'),
     path('api/auth/logout/', logout_view, name='logout'),
+    path('api/auth/register/', register_view, name='register'),
 ]
 
 if settings.DEBUG:

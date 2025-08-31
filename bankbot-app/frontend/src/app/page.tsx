@@ -22,7 +22,7 @@ export default function Home() {
 
     try {
       if (isLogin) {
-        // Handle login
+        // Handle login - Fixed endpoint
         const response = await fetch('http://localhost:8000/api/auth/login/', {
           method: 'POST',
           headers: {
@@ -36,12 +36,15 @@ export default function Home() {
         });
 
         if (response.ok) {
+          const data = await response.json();
+          console.log('Login successful:', data);
           router.push('/dashboard');
         } else {
-          alert('Login failed. Please check your credentials.');
+          const errorData = await response.json();
+          alert(`Login failed: ${errorData.error || 'Please check your credentials.'}`);
         }
       } else {
-        // Handle registration
+        // Handle registration - Fixed endpoint
         if (formData.password !== formData.confirmPassword) {
           alert('Passwords do not match');
           return;
@@ -63,7 +66,8 @@ export default function Home() {
           alert('Registration successful! Please log in.');
           setIsLogin(true);
         } else {
-          alert('Registration failed. Please try again.');
+          const errorData = await response.json();
+          alert(`Registration failed: ${errorData.error || 'Please try again.'}`);
         }
       }
     } catch (error) {
