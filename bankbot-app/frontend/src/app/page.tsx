@@ -1,8 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Eye, EyeOff, Lock, User, Building2, MessageCircle } from 'lucide-react';
+import { 
+  Eye, EyeOff, Lock, User, Building2, MessageCircle, 
+  Shield, CreditCard, TrendingUp, Globe, ArrowRight,
+  CheckCircle, Star, Zap
+} from 'lucide-react';
 
 export default function Home() {
   const [isLogin, setIsLogin] = useState(true);
@@ -14,7 +18,34 @@ export default function Home() {
     confirmPassword: ''
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [currentFeature, setCurrentFeature] = useState(0);
   const router = useRouter();
+
+  // Auto-rotate features
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentFeature((prev) => (prev + 1) % 3);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const features = [
+    {
+      icon: <MessageCircle className="h-8 w-8" />,
+      title: "AI-Powered Banking",
+      description: "Get instant answers and perform transactions through natural conversation with our intelligent BankBot."
+    },
+    {
+      icon: <Shield className="h-8 w-8" />,
+      title: "Bank-Grade Security",
+      description: "Your data is protected with enterprise-level encryption and multi-factor authentication."
+    },
+    {
+      icon: <TrendingUp className="h-8 w-8" />,
+      title: "Smart Insights",
+      description: "Get personalized financial insights and recommendations to optimize your banking experience."
+    }
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +53,6 @@ export default function Home() {
 
     try {
       if (isLogin) {
-        // Handle login - Fixed endpoint
         const response = await fetch('http://localhost:8000/api/auth/login/', {
           method: 'POST',
           headers: {
@@ -44,7 +74,6 @@ export default function Home() {
           alert(`Login failed: ${errorData.error || 'Please check your credentials.'}`);
         }
       } else {
-        // Handle registration - Fixed endpoint
         if (formData.password !== formData.confirmPassword) {
           alert('Passwords do not match');
           return;
@@ -86,94 +115,121 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20" />
+        <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob" />
+        <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000" />
+        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000" />
+      </div>
+
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="relative z-10 bg-white/10 backdrop-blur-md border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center space-x-3">
-              <Building2 className="h-8 w-8 text-blue-600" />
-              <h1 className="text-2xl font-bold text-gray-900">BankBot</h1>
+              <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
+                <Building2 className="h-8 w-8 text-white" />
+              </div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+                BankBot
+              </h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-gray-600">AI-Powered Banking</span>
+              <span className="text-blue-200 font-medium">AI-Powered Banking</span>
             </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left Side - Features */}
           <div className="space-y-8">
             <div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Welcome to the Future of Banking
+              <h2 className="text-5xl font-bold text-white mb-6 leading-tight">
+                Welcome to the
+                <span className="block bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                  Future of Banking
+                </span>
               </h2>
-              <p className="text-xl text-gray-600 mb-8">
+              <p className="text-xl text-blue-100 mb-8 leading-relaxed">
                 Experience seamless banking with our AI-powered chatbot that understands your needs and provides instant assistance.
               </p>
             </div>
 
+            {/* Animated Feature Cards */}
             <div className="space-y-6">
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0">
-                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <MessageCircle className="h-6 w-6 text-blue-600" />
+              {features.map((feature, index) => (
+                <div
+                  key={index}
+                  className={`flex items-start space-x-4 p-4 rounded-2xl transition-all duration-500 ${
+                    currentFeature === index
+                      ? 'bg-white/20 backdrop-blur-md border border-white/30 scale-105'
+                      : 'bg-white/10 backdrop-blur-md border border-white/20'
+                  }`}
+                >
+                  <div className={`flex-shrink-0 p-3 rounded-xl transition-all duration-300 ${
+                    currentFeature === index
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
+                      : 'bg-white/20 text-blue-200'
+                  }`}>
+                    {feature.icon}
+                  </div>
+                  <div>
+                    <h3 className={`text-lg font-semibold transition-colors duration-300 ${
+                      currentFeature === index ? 'text-white' : 'text-blue-100'
+                    }`}>
+                      {feature.title}
+                    </h3>
+                    <p className={`text-sm transition-colors duration-300 ${
+                      currentFeature === index ? 'text-blue-100' : 'text-blue-200'
+                    }`}>
+                      {feature.description}
+                    </p>
                   </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">AI Chatbot</h3>
-                  <p className="text-gray-600">Get instant answers to banking questions and perform transactions through natural conversation.</p>
-                </div>
-              </div>
+              ))}
+            </div>
 
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0">
-                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                    <Building2 className="h-6 w-6 text-green-600" />
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Full Banking Portal</h3>
-                  <p className="text-gray-600">Check balances, view transactions, transfer money, and manage your accounts all in one place.</p>
-                </div>
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-6 pt-6">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-white">99.9%</div>
+                <div className="text-sm text-blue-200">Uptime</div>
               </div>
-
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0">
-                  <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <Lock className="h-6 w-6 text-purple-600" />
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Secure & Reliable</h3>
-                  <p className="text-gray-600">Bank-grade security with encrypted communications and multi-factor authentication.</p>
-                </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-white">24/7</div>
+                <div className="text-sm text-blue-200">Support</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-white">256-bit</div>
+                <div className="text-sm text-blue-200">Encryption</div>
               </div>
             </div>
           </div>
 
           {/* Right Side - Login/Register Form */}
-          <div className="bg-white rounded-2xl shadow-xl p-8">
+          <div className="bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl p-8">
             <div className="text-center mb-8">
-              <h3 className="text-2xl font-bold text-gray-900">
+              <h3 className="text-3xl font-bold text-white mb-2">
                 {isLogin ? 'Welcome Back' : 'Create Account'}
               </h3>
-              <p className="text-gray-600">
+              <p className="text-blue-200">
                 {isLogin ? 'Sign in to your account' : 'Join BankBot today'}
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="username" className="block text-sm font-medium text-blue-100 mb-2">
                   Username
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-gray-400" />
+                    <User className="h-5 w-5 text-blue-300" />
                   </div>
                   <input
                     type="text"
@@ -182,7 +238,7 @@ export default function Home() {
                     value={formData.username}
                     onChange={handleInputChange}
                     required
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="block w-full pl-10 pr-3 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-blue-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
                     placeholder="Enter your username"
                   />
                 </div>
@@ -190,7 +246,7 @@ export default function Home() {
 
               {!isLogin && (
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-blue-100 mb-2">
                     Email
                   </label>
                   <input
@@ -200,19 +256,19 @@ export default function Home() {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="block w-full px-3 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-blue-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
                     placeholder="Enter your email"
                   />
                 </div>
               )}
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-blue-100 mb-2">
                   Password
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
+                    <Lock className="h-5 w-5 text-blue-300" />
                   </div>
                   <input
                     type={showPassword ? 'text' : 'password'}
@@ -221,18 +277,18 @@ export default function Home() {
                     value={formData.password}
                     onChange={handleInputChange}
                     required
-                    className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="block w-full pl-10 pr-12 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-blue-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
                     placeholder="Enter your password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-blue-300 hover:text-white transition-colors"
                   >
                     {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400" />
+                      <EyeOff className="h-5 w-5" />
                     ) : (
-                      <Eye className="h-5 w-5 text-gray-400" />
+                      <Eye className="h-5 w-5" />
                     )}
                   </button>
                 </div>
@@ -240,7 +296,7 @@ export default function Home() {
 
               {!isLogin && (
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-blue-100 mb-2">
                     Confirm Password
                   </label>
                   <input
@@ -250,7 +306,7 @@ export default function Home() {
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
                     required
-                    className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="block w-full px-3 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-blue-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
                     placeholder="Confirm your password"
                   />
                 </div>
@@ -259,27 +315,48 @@ export default function Home() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-6 rounded-xl hover:from-blue-700 hover:to-purple-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 font-semibold text-lg"
               >
-                {isLoading ? 'Loading...' : (isLogin ? 'Sign In' : 'Create Account')}
+                {isLoading ? (
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Loading...</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>{isLogin ? 'Sign In' : 'Create Account'}</span>
+                    <ArrowRight className="h-5 w-5" />
+                  </div>
+                )}
               </button>
             </form>
 
             <div className="mt-6 text-center">
               <button
                 onClick={() => setIsLogin(!isLogin)}
-                className="text-blue-600 hover:text-blue-700 font-medium"
+                className="text-blue-300 hover:text-white font-medium transition-colors"
               >
                 {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
               </button>
             </div>
 
             {isLogin && (
-              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                <h4 className="text-sm font-medium text-gray-900 mb-2">Demo Accounts:</h4>
-                <div className="text-sm text-gray-600 space-y-1">
-                  <div>Username: <span className="font-mono">john_doe</span> | Password: <span className="font-mono">password123</span></div>
-                  <div>Username: <span className="font-mono">jane_smith</span> | Password: <span className="font-mono">password123</span></div>
+              <div className="mt-6 p-4 bg-white/10 rounded-xl border border-white/20">
+                <h4 className="text-sm font-medium text-white mb-3 flex items-center">
+                  <Star className="h-4 w-4 mr-2 text-yellow-400" />
+                  Demo Accounts
+                </h4>
+                <div className="text-sm text-blue-200 space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span>Username: <span className="font-mono text-white">john_doe</span></span>
+                    <span>Password: <span className="font-mono text-white">password123</span></span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span>Username: <span className="font-mono text-white">jane_smith</span></span>
+                    <span>Password: <span className="font-mono text-white">password123</span></span>
+                  </div>
                 </div>
               </div>
             )}

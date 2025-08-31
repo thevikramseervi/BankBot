@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Send, Bot } from 'lucide-react';
+import { Send, Bot, X, Sparkles, MessageCircle, CreditCard, TrendingUp, Shield } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -23,7 +23,7 @@ export default function Chatbot({ isOpen, onClose }: ChatbotProps) {
     {
       id: '1',
       type: 'bot',
-      content: "Hi! I'm BankBot, your AI banking assistant. How can I help you today?",
+      content: "Hi! I'm BankBot, your AI banking assistant. I can help you with balance inquiries, transfers, transactions, and more. What would you like to know?",
       timestamp: new Date()
     }
   ]);
@@ -61,8 +61,7 @@ export default function Chatbot({ isOpen, onClose }: ChatbotProps) {
     setIsTyping(true);
 
     try {
-      // Fixed endpoint URL to match Django backend routing
-      const response = await fetch('http://localhost:8000/api/chatbot/chat/', {
+      const response = await fetch('http://localhost:8000/api/chat/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -89,7 +88,6 @@ export default function Chatbot({ isOpen, onClose }: ChatbotProps) {
 
         setMessages(prev => [...prev, botMessage]);
       } else {
-        // Fallback response if API fails
         const fallbackMessage: Message = {
           id: (Date.now() + 1).toString(),
           type: 'bot',
@@ -120,11 +118,10 @@ export default function Chatbot({ isOpen, onClose }: ChatbotProps) {
   };
 
   const quickReplies = [
-    "What's my current balance?",
-    "How do I transfer money?",
-    "Show my recent transactions",
-    "Tell me about my accounts",
-    "What are your banking hours?"
+    { text: "What's my balance?", icon: CreditCard, color: "from-blue-500 to-blue-600" },
+    { text: "How do I transfer money?", icon: TrendingUp, color: "from-green-500 to-green-600" },
+    { text: "Show my transactions", icon: MessageCircle, color: "from-purple-500 to-purple-600" },
+    { text: "Account information", icon: Shield, color: "from-orange-500 to-orange-600" }
   ];
 
   const handleQuickReply = (reply: string) => {
@@ -135,51 +132,56 @@ export default function Chatbot({ isOpen, onClose }: ChatbotProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 h-[600px] flex flex-col">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md h-[600px] flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-2xl">
-          <div className="flex items-center space-x-3">
-            <Bot className="h-6 w-6" />
-            <div>
-              <h3 className="text-lg font-semibold">BankBot</h3>
-              <p className="text-sm text-blue-100">AI Banking Assistant</p>
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-3xl">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-white/20 rounded-xl">
+                <Bot className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">BankBot</h3>
+                <p className="text-sm text-blue-100">AI Banking Assistant</p>
+              </div>
             </div>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-white/20 rounded-xl transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="text-blue-100 hover:text-white transition-colors"
-          >
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-slate-50 to-white">
           {messages.map((message) => (
             <div
               key={message.id}
               className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
+                className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl shadow-sm ${
                   message.type === 'user'
-                    ? 'bg-blue-600 text-white rounded-br-md'
-                    : 'bg-gray-100 text-gray-800 rounded-bl-md'
+                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-br-md'
+                    : 'bg-white border border-slate-200 text-slate-800 rounded-bl-md'
                 }`}
               >
-                <p className="text-sm">{message.content}</p>
+                <p className="text-sm leading-relaxed">{message.content}</p>
                 {message.intent && (
-                  <div className="mt-2 text-xs opacity-75">
-                    Intent: {message.intent}
-                    {message.confidence && ` (${(message.confidence * 100).toFixed(1)}%)`}
+                  <div className="mt-2 text-xs opacity-75 flex items-center space-x-1">
+                    <Sparkles className="h-3 w-3" />
+                    <span>Intent: {message.intent}</span>
+                    {message.confidence && (
+                      <span>({(message.confidence * 100).toFixed(1)}%)</span>
+                    )}
                   </div>
                 )}
                 {message.entities && Object.keys(message.entities).length > 0 && (
                   <div className="mt-2 text-xs opacity-75">
-                    Entities: {Object.keys(message.entities).map((key) => `${key}: ${message.entities[key]}`).join(', ')}
+                    <span className="font-medium">Entities:</span> {Object.keys(message.entities).map((key) => `${key}: ${message.entities[key]}`).join(', ')}
                   </div>
                 )}
               </div>
@@ -188,11 +190,11 @@ export default function Chatbot({ isOpen, onClose }: ChatbotProps) {
           
           {isTyping && (
             <div className="flex justify-start">
-              <div className="bg-gray-100 text-gray-800 px-4 py-2 rounded-2xl rounded-bl-md">
+              <div className="bg-white border border-slate-200 text-slate-800 px-4 py-3 rounded-2xl rounded-bl-md shadow-sm">
                 <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                 </div>
               </div>
             </div>
@@ -202,35 +204,39 @@ export default function Chatbot({ isOpen, onClose }: ChatbotProps) {
         </div>
 
         {/* Quick Replies */}
-        <div className="px-4 pb-2">
-          <div className="flex flex-wrap gap-2">
-            {quickReplies.map((reply, index) => (
-              <button
-                key={index}
-                onClick={() => handleQuickReply(reply)}
-                className="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full hover:bg-blue-100 transition-colors"
-              >
-                {reply}
-              </button>
-            ))}
+        <div className="px-6 pb-4 bg-white border-t border-slate-100">
+          <div className="flex flex-wrap gap-2 mb-4">
+            {quickReplies.map((reply, index) => {
+              const Icon = reply.icon;
+              return (
+                <button
+                  key={index}
+                  onClick={() => handleQuickReply(reply.text)}
+                  className="flex items-center space-x-2 bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700 px-3 py-2 rounded-full hover:from-slate-200 hover:to-slate-300 transition-all duration-200 text-xs font-medium"
+                >
+                  <Icon className="h-3 w-3" />
+                  <span>{reply.text}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {/* Input */}
-        <div className="p-4 border-t">
-          <div className="flex space-x-2">
+        <div className="p-6 bg-white border-t border-slate-100">
+          <div className="flex space-x-3">
             <input
               type="text"
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Type your message..."
-              className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 placeholder-slate-400"
             />
             <button
               onClick={handleSendMessage}
               disabled={!inputMessage.trim() || isTyping}
-              className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-3 rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 shadow-lg"
             >
               <Send className="h-5 w-5" />
             </button>
