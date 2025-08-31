@@ -3,10 +3,12 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import toast, { Toaster } from 'react-hot-toast';
 import { 
   Building2, MessageCircle, Shield, TrendingUp, 
   CreditCard, Users, Globe, Zap, ArrowRight,
-  CheckCircle, Star, Sparkles, Eye, EyeOff, Lock, User, Mail
+  CheckCircle, Star, Sparkles, Eye, EyeOff, Lock, User, Mail,
+  Heart, Award, Clock, Globe2
 } from 'lucide-react';
 
 export default function Home() {
@@ -59,10 +61,10 @@ export default function Home() {
   ];
 
   const stats = [
-    { number: "99.9%", label: "Uptime" },
-    { number: "256-bit", label: "Encryption" },
-    { number: "24/7", label: "Support" },
-    { number: "1M+", label: "Users" }
+    { number: "99.9%", label: "Uptime", icon: <Clock className="h-5 w-5" /> },
+    { number: "256-bit", label: "Encryption", icon: <Shield className="h-5 w-5" /> },
+    { number: "24/7", label: "Support", icon: <Heart className="h-5 w-5" /> },
+    { number: "1M+", label: "Users", icon: <Users className="h-5 w-5" /> }
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -86,18 +88,25 @@ export default function Home() {
         if (response.ok) {
           const data = await response.json();
           console.log('Login successful:', data);
-          // Store token in localStorage
+          
+          // Store tokens in localStorage
           localStorage.setItem('token', data.access_token);
+          localStorage.setItem('refresh_token', data.refresh_token);
+          
+          toast.success('Login successful! Redirecting...');
+          
           // Redirect to dashboard
-          router.push('/dashboard');
+          setTimeout(() => {
+            router.push('/dashboard');
+          }, 1000);
         } else {
           const errorData = await response.json();
-          alert(`Login failed: ${errorData.detail || 'Please check your credentials.'}`);
+          toast.error(`Login failed: ${errorData.detail || 'Please check your credentials.'}`);
         }
       } else {
         // Handle registration
         if (formData.password !== formData.confirmPassword) {
-          alert('Passwords do not match');
+          toast.error('Passwords do not match');
           return;
         }
 
@@ -115,17 +124,22 @@ export default function Home() {
         });
 
         if (response.ok) {
-          alert('Registration successful! Please log in.');
+          toast.success('Registration successful! Please log in.');
           setIsLogin(true);
           setFormData({ username: '', email: '', password: '', confirmPassword: '', fullName: '' });
         } else {
           const errorData = await response.json();
-          alert(`Registration failed: ${errorData.detail || 'Please try again.'}`);
+          if (typeof errorData.detail === 'object' && errorData.detail.errors) {
+            const errorMessages = errorData.detail.errors.join(', ');
+            toast.error(`Registration failed: ${errorMessages}`);
+          } else {
+            toast.error(`Registration failed: ${errorData.detail || 'Please try again.'}`);
+          }
         }
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('An error occurred. Please try again.');
+      toast.error('An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -140,6 +154,18 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
+      <Toaster 
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#1f2937',
+            color: '#fff',
+            border: '1px solid #374151',
+          },
+        }}
+      />
+      
       {/* Animated Background */}
       <div className="fixed inset-0">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900" />
@@ -318,6 +344,11 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 1.7 + index * 0.1 }}
               className="text-center"
             >
+              <div className="flex justify-center mb-3">
+                <div className="p-3 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full">
+                  {stat.icon}
+                </div>
+              </div>
               <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
                 {stat.number}
               </div>
