@@ -136,18 +136,3 @@ class BankBot:
         """Get fallback response when intent is not detected"""
         import random
         return random.choice(self.fallback_responses)
-
-    def learn_from_interaction(self, message: str, response: str, feedback: bool):
-        """Learn from user interactions to improve responses"""
-        # This could be expanded to include machine learning capabilities
-        pass
-
-    def get_suggested_questions(self) -> List[str]:
-        """Get suggested questions for users"""
-        return [
-            "What's my current balance?",
-            "How do I transfer money?",
-            "Show my recent transactions",
-            "Tell me about my accounts",
-            "What are your banking hours?"
-        ]

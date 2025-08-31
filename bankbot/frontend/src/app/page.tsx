@@ -12,7 +12,6 @@ import {
 export default function Home() {
   const [isLogin, setIsLogin] = useState(true);
   const [currentFeature, setCurrentFeature] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -26,7 +25,6 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    setIsVisible(true);
     const interval = setInterval(() => {
       setCurrentFeature((prev) => (prev + 1) % 4);
     }, 3000);

@@ -1,112 +1,112 @@
-# 🚀 BankBot - AI Banking Assistant
+# 🏦 BankBot - AI-Powered Banking Assistant
 
-A modern, AI-powered banking application built with cutting-edge technologies and beautiful design.
+A modern, full-stack banking application built with **FastAPI** and **Next.js 14**, featuring an intelligent AI chatbot for banking assistance.
 
 ## ✨ Features
 
 ### 🎨 **Modern UI/UX**
-- **Glassmorphism Design**: Beautiful translucent effects and modern aesthetics
-- **Smooth Animations**: Framer Motion powered animations and transitions
-- **Responsive Design**: Works perfectly on all devices
-- **Dark Theme**: Elegant dark mode with gradient accents
+- **Glassmorphism Design**: Beautiful glass-like effects and gradients
+- **Responsive Layout**: Works perfectly on all devices
+- **Smooth Animations**: Framer Motion powered interactions
+- **Dark Theme**: Eye-friendly dark color scheme
 
-### 🤖 **AI-Powered Chatbot**
-- **Intelligent Responses**: Context-aware banking assistance
-- **Intent Detection**: Understands user queries and provides relevant answers
-- **Personalized Experience**: Tailored responses based on user context
-- **Quick Actions**: Suggested actions for common banking tasks
+### 🤖 **AI Chatbot**
+- **Intelligent Responses**: Pattern-based intent recognition
+- **Banking Knowledge**: Built-in banking FAQ responses
+- **Context Awareness**: Personalized responses based on user data
+- **Quick Actions**: Suggested actions for common queries
 
-### 💳 **Banking Features**
-- **Account Management**: Multiple account types (checking, savings, investment)
-- **Transaction History**: Detailed transaction tracking with categories
-- **Balance Overview**: Real-time balance monitoring with privacy toggle
-- **Quick Actions**: Transfer money, pay bills, open accounts
+### 🏦 **Banking Features**
+- **Account Management**: View balances and account details
+- **Transaction History**: Track spending and income
+- **Secure Authentication**: JWT-based authentication
+- **Real-time Updates**: Live data from backend
 
 ### 🔒 **Security & Performance**
-- **JWT Authentication**: Secure token-based authentication
-- **Password Hashing**: Bcrypt encryption for user passwords
-- **FastAPI Backend**: High-performance Python backend
-- **SQLite Database**: Lightweight, reliable data storage
+- **JWT Authentication**: Secure token-based auth
+- **Password Hashing**: Bcrypt encryption
+- **CORS Protection**: Secure cross-origin requests
+- **SQLite Database**: Fast, reliable data storage
 
-## 🛠️ Tech Stack
+## 🚀 Tech Stack
 
 ### **Frontend**
-- **Next.js 14**: Latest React framework with App Router
-- **TypeScript**: Type-safe development
-- **Tailwind CSS**: Utility-first CSS framework
-- **Framer Motion**: Smooth animations and transitions
-- **Lucide React**: Beautiful icon set
+- **Next.js 14** - React framework with App Router
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Utility-first CSS framework
+- **Framer Motion** - Smooth animations
+- **Lucide React** - Beautiful icons
+- **Axios** - HTTP client
 
 ### **Backend**
-- **FastAPI**: Modern, fast Python web framework
-- **SQLAlchemy**: SQL toolkit and ORM
-- **Pydantic**: Data validation using Python type annotations
-- **JWT**: JSON Web Token authentication
-- **Uvicorn**: Lightning-fast ASGI server
+- **FastAPI** - Modern Python web framework
+- **SQLAlchemy** - SQL toolkit and ORM
+- **Pydantic** - Data validation
+- **JWT** - JSON Web Tokens
+- **Passlib** - Password hashing
+- **Uvicorn** - ASGI server
 
 ### **Database**
-- **SQLite**: Lightweight, serverless database
-- **SQLAlchemy ORM**: Object-relational mapping
+- **SQLite** - Lightweight, serverless database
 
-## 🚀 Quick Start
+## 🛠️ Quick Start
 
 ### **Prerequisites**
 - Python 3.8+
 - Node.js 18+
 - npm or yarn
 
-### **1. Clone and Setup**
+### **1. Clone & Setup**
 ```bash
 git clone <repository-url>
 cd bankbot
 ```
 
-### **2. Backend Setup**
+### **2. Start Everything**
 ```bash
-cd backend
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-### **3. Frontend Setup**
-```bash
-cd ../frontend
-npm install
-```
-
-### **4. Start Everything**
-```bash
-cd ..
-chmod +x start.sh
 ./start.sh
 ```
 
-### **5. Access the Application**
+This script will:
+- ✅ Start the FastAPI backend
+- ✅ Create demo user automatically
+- ✅ Start the Next.js frontend
+- ✅ Verify both servers are running
+
+### **3. Access the App**
 - **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8000
-- **API Documentation**: http://localhost:8000/docs
+- **Backend**: http://localhost:8000
+- **API Docs**: http://localhost:8000/docs
 
-## 📱 Screenshots
+### **4. Login with Demo Account**
+- **Email**: `demo@bankbot.com`
+- **Password**: `demo123`
 
-### Landing Page
-- Modern hero section with animated background
-- Feature highlights with glassmorphism cards
-- Statistics and call-to-action sections
+## 📁 Project Structure
 
-### Dashboard
-- Account overview with balance privacy toggle
-- Multiple account cards with trend indicators
-- Tabbed navigation (Overview, Transactions, Analytics, Goals, Settings)
-- Recent activity and quick actions
+```
+bankbot/
+├── backend/                 # FastAPI backend
+│   ├── main.py            # Main application
+│   ├── database.py        # Database configuration
+│   ├── models.py          # SQLAlchemy models
+│   ├── schemas.py         # Pydantic schemas
+│   ├── auth.py            # Authentication utilities
+│   ├── chatbot.py         # AI chatbot logic
+│   ├── create_demo_user.py # Demo user creation
+│   └── venv/              # Python virtual environment
+├── frontend/               # Next.js frontend
+│   ├── src/
+│   │   ├── app/           # App Router pages
+│   │   │   ├── page.tsx   # Landing page
+│   │   │   └── dashboard/ # Dashboard pages
+│   │   └── components/    # React components
+│   └── package.json
+├── start.sh               # Startup script
+└── README.md              # This file
+```
 
-### Chatbot
-- Modal-based chat interface
-- Quick reply suggestions
-- Intent detection display
-- Beautiful message bubbles
-
-## 🔧 API Endpoints
+## 🔌 API Endpoints
 
 ### **Authentication**
 - `POST /api/auth/register` - User registration
@@ -114,86 +114,68 @@ chmod +x start.sh
 
 ### **Banking**
 - `GET /api/banking/accounts` - Get user accounts
-- `GET /api/banking/balance` - Get account balances
+- `GET /api/banking/balance` - Get total balance
 - `GET /api/banking/transactions` - Get transaction history
 
 ### **Chatbot**
-- `POST /api/chat` - Chat with BankBot AI
+- `POST /api/chat` - Chat with AI assistant
 
-### **Health**
-- `GET /` - API status and endpoints
-- `GET /health` - Health check
+## 🤖 Chatbot Capabilities
 
-## 🎯 Chatbot Capabilities
-
-The AI chatbot can handle:
+The AI chatbot can help with:
 - **Balance Inquiries**: Check account balances
 - **Transfer Information**: How to transfer money
-- **Transaction History**: View recent transactions
-- **Account Information**: Account details and types
-- **General Banking Help**: Banking hours, support
+- **Transaction History**: View recent activity
+- **Account Details**: Account information
+- **General Help**: Banking assistance
 
 ## 🎨 Design System
 
-### **Color Palette**
-- **Primary**: Blue gradients (#3B82F6 to #8B5CF6)
-- **Secondary**: Purple and cyan accents
-- **Background**: Dark slate with blue undertones
-- **Text**: White and blue variations
-
-### **Typography**
-- **Headings**: Bold, gradient text with background clipping
-- **Body**: Clean, readable fonts
-- **Accents**: Colored text for important information
+### **Colors**
+- **Primary**: Blue (#3B82F6) to Purple (#8B5CF6)
+- **Secondary**: Cyan (#06B6D4) to Teal (#14B8A6)
+- **Accent**: Orange (#F97316) to Red (#EF4444)
 
 ### **Components**
-- **Cards**: Glassmorphism with backdrop blur
-- **Buttons**: Gradient backgrounds with hover effects
-- **Inputs**: Modern form controls with focus states
-- **Modals**: Smooth animations and backdrop blur
+- **Glassmorphism**: Translucent, blurred backgrounds
+- **Gradients**: Smooth color transitions
+- **Shadows**: Subtle depth and elevation
+- **Rounded Corners**: Modern, friendly appearance
 
-## 🔒 Security Features
+## 🔧 Development
 
-- **JWT Authentication**: Secure token-based sessions
-- **Password Hashing**: Bcrypt encryption
-- **CORS Protection**: Cross-origin request handling
-- **Input Validation**: Pydantic schema validation
-- **SQL Injection Protection**: SQLAlchemy ORM
+### **Backend Development**
+```bash
+cd backend
+source venv/bin/activate
+uvicorn main:app --reload
+```
 
-## 📊 Performance Features
+### **Frontend Development**
+```bash
+cd frontend
+npm run dev
+```
 
-- **FastAPI**: High-performance async framework
-- **Uvicorn**: Lightning-fast ASGI server
-- **SQLite**: Serverless, fast database
-- **Next.js**: Optimized React framework
-- **Image Optimization**: Next.js built-in image optimization
+### **Database Management**
+```bash
+cd backend
+source venv/bin/activate
+python create_demo_user.py
+```
 
 ## 🚀 Deployment
 
-### **Backend (FastAPI)**
-```bash
-cd backend
-pip install -r requirements.txt
-uvicorn main:app --host 0.0.0.0 --port 8000
-```
+### **Backend Deployment**
+1. Set up production environment
+2. Configure environment variables
+3. Use production ASGI server (Gunicorn + Uvicorn)
+4. Set up reverse proxy (Nginx)
 
-### **Frontend (Next.js)**
-```bash
-cd frontend
-npm run build
-npm start
-```
-
-### **Environment Variables**
-Create `.env` files for production:
-```bash
-# Backend
-SECRET_KEY=your-production-secret-key
-DATABASE_URL=your-database-url
-
-# Frontend
-NEXT_PUBLIC_API_URL=your-backend-url
-```
+### **Frontend Deployment**
+1. Build production version: `npm run build`
+2. Deploy to Vercel, Netlify, or static hosting
+3. Configure environment variables
 
 ## 🤝 Contributing
 
@@ -203,22 +185,17 @@ NEXT_PUBLIC_API_URL=your-backend-url
 4. Add tests if applicable
 5. Submit a pull request
 
-## 📝 License
+## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License.
 
 ## 🙏 Acknowledgments
 
-- **FastAPI** for the amazing Python web framework
-- **Next.js** for the React framework
-- **Tailwind CSS** for the utility-first CSS framework
-- **Framer Motion** for the smooth animations
-- **Lucide** for the beautiful icons
+- **FastAPI** team for the amazing framework
+- **Next.js** team for the React framework
+- **Tailwind CSS** for the utility-first CSS
+- **Framer Motion** for the animation library
 
 ---
 
-## 🎉 **Ready to Transform Your Banking Experience?**
-
-BankBot combines cutting-edge technology with beautiful design to create the future of banking. Start building your AI-powered banking application today!
-
-**Get Started**: Run `./start.sh` and experience the future of banking! 🚀✨
+**Built with ❤️ and AI** 🚀✨

@@ -5,12 +5,10 @@ Built with FastAPI, SQLAlchemy, and Pydantic
 
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from contextlib import asynccontextmanager
 import uvicorn
-from datetime import datetime, timedelta
-from typing import List, Optional
-import json
+from datetime import datetime
+from typing import List
 
 from database import engine, Base
 from models import User, Account, Transaction, ChatMessage
@@ -52,9 +50,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Security
-security = HTTPBearer()
 
 # Root endpoint
 @app.get("/")
@@ -114,7 +109,8 @@ async def register(user_data: UserCreate):
         id=new_user.id,
         email=new_user.email,
         username=new_user.username,
-        full_name=new_user.full_name
+        full_name=new_user.full_name,
+        created_at=new_user.created_at
     )
 
 @app.post("/api/auth/login")
@@ -140,7 +136,8 @@ async def login(user_data: UserLogin):
             id=user.id,
             email=user.email,
             username=user.username,
-            full_name=user.full_name
+            full_name=user.full_name,
+            created_at=user.created_at
         )
     }
 
@@ -170,7 +167,9 @@ async def get_balance(current_user: User = Depends(get_current_user)):
                 id=acc.id,
                 account_number=acc.account_number,
                 account_type=acc.account_type,
-                balance=acc.balance
+                balance=acc.balance,
+                user_id=acc.user_id,
+                created_at=acc.created_at
             ) for acc in accounts
         ]
     )

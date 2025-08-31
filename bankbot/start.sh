@@ -3,7 +3,7 @@
 echo "🚀 Starting BankBot - AI Banking Assistant"
 echo "=========================================="
 
-# Function to cleanup background processes
+# Function to cleanup on exit
 cleanup() {
     echo "🛑 Shutting down servers..."
     pkill -f "uvicorn main:app"
@@ -11,10 +11,10 @@ cleanup() {
     exit 0
 }
 
-# Set trap to cleanup on script exit
+# Trap Ctrl+C and cleanup
 trap cleanup SIGINT SIGTERM
 
-# Start Backend (FastAPI)
+# Start FastAPI backend
 echo "🔧 Starting FastAPI backend..."
 cd backend
 source venv/bin/activate
@@ -34,7 +34,14 @@ else
     exit 1
 fi
 
-# Start Frontend (Next.js)
+# Create demo user
+echo "👤 Creating demo user..."
+cd backend
+source venv/bin/activate
+python create_demo_user.py
+cd ..
+
+# Start Next.js frontend
 echo "🎨 Starting Next.js frontend..."
 cd frontend
 npm run dev &
@@ -59,7 +66,11 @@ echo "📱 Frontend: http://localhost:3000"
 echo "🔧 Backend:  http://localhost:8000"
 echo "📚 API Docs: http://localhost:8000/docs"
 echo ""
+echo "🔐 Demo Login:"
+echo "   Email: demo@bankbot.com"
+echo "   Password: demo123"
+echo ""
 echo "Press Ctrl+C to stop all servers"
 
-# Wait for user interrupt
+# Wait for background processes
 wait

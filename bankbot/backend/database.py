@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# Database URL
+# Database URL - SQLite for simplicity
 SQLALCHEMY_DATABASE_URL = "sqlite:///./bankbot.db"
 
 # Create engine
